@@ -66,3 +66,29 @@ class MojangAccount:
     		"Content-Type: application/json\r\n"
     		f"Authorization: {self.bearer}\r\n\r\n")
     	self.payload =  bytes(payload, "utf-8")
+
+
+class SocketConnection:
+	def __init__(self, payload)
+        self.payload = payload
+        self.sock = None
+        self.response = {}
+        self.status_code = None
+        self.full_resp = ""
+
+    def connect(self):
+    	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    	context = ssl.create_default_context()
+    	sock = context.wrap_socket(sock, server_hostname="api.minecraftservices.com")
+    	sock.connect(("api.minecraftservices.com", 443))
+    	self.sock = sock
+
+    def send(self):
+    	self.sock.send(self.payload)
+
+    def close(self):
+    	self.sock.close()
+
+    def receive(self):
+    	self.full_resp = self.sock.recv(4096).decode("utf-8")
+    	self.status_code = self.full_resp[9:12]
