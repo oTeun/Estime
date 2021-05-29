@@ -30,6 +30,7 @@ class MojangAccount:
         self.bearer = None
         self.nameChangeAllowed = True
         self.wantedName = name
+        self.payload = b""
 
     def authenticate(self):
         r = requests.post("https://authserver.mojang.com/authenticate",
