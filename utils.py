@@ -21,7 +21,7 @@ def readConfig():
 
 
 class MojangAccount:
-    def __init__(self, email, password, sq=None):
+    def __init__(self, email, password, sq=None, wantedName):
         if sq is None:
             sq = []
         self.password = password
@@ -29,6 +29,7 @@ class MojangAccount:
         self.valid = False
         self.bearer = None
         self.nameChangeAllowed = True
+        self.wantedName = name
 
     def authenticate(self):
         r = requests.post("https://authserver.mojang.com/authenticate",
@@ -61,7 +62,7 @@ class MojangAccount:
             pass
 
     def create_payload(self):
-    	payload = (f"PUT /minecraft/profile/name/{name} HTTP/1.1\r\n"
+    	payload = (f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1\r\n"
     		"Host: api.minecraftservices.com\r\n"
     		"Content-Type: application/json\r\n"
     		f"Authorization: {self.bearer}\r\n\r\n")
