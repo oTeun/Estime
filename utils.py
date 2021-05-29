@@ -21,15 +21,16 @@ def readConfig():
 
 
 class MojangAccount:
-    def __init__(self, email, password, sq=None, wantedName):
+    def __init__(self, email, password, wantedName, sq=None):
         if sq is None:
             sq = []
+        self.email = email
         self.password = password
+        self.wantedName = wantedName
         self.sq = sq
         self.valid = False
         self.bearer = None
         self.nameChangeAllowed = True
-        self.wantedName = name
         self.payload = b""
 
     def authenticate(self):
@@ -63,15 +64,15 @@ class MojangAccount:
             pass
 
     def create_payload(self):
-    	payload = (f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1\r\n"
-    		"Host: api.minecraftservices.com\r\n"
-    		"Content-Type: application/json\r\n"
-    		f"Authorization: {self.bearer}\r\n\r\n")
-    	self.payload =  bytes(payload, "utf-8")
+        payload = (f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1\r\n"
+                   "Host: api.minecraftservices.com\r\n"
+                   "Content-Type: application/json\r\n"
+                   f"Authorization: {self.bearer}\r\n\r\n")
+        self.payload = bytes(payload, "utf-8")
 
 
 class SocketConnection:
-	def __init__(self, payload)
+    def __init__(self, payload):
         self.payload = payload
         self.sock = None
         self.response = {}
@@ -79,18 +80,18 @@ class SocketConnection:
         self.full_resp = ""
 
     def connect(self):
-    	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    	context = ssl.create_default_context()
-    	sock = context.wrap_socket(sock, server_hostname="api.minecraftservices.com")
-    	sock.connect(("api.minecraftservices.com", 443))
-    	self.sock = sock
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        context = ssl.create_default_context()
+        sock = context.wrap_socket(sock, server_hostname="api.minecraftservices.com")
+        sock.connect(("api.minecraftservices.com", 443))
+        self.sock = sock
 
     def send(self):
-    	self.sock.send(self.payload)
+        self.sock.send(self.payload)
 
     def close(self):
-    	self.sock.close()
+        self.sock.close()
 
     def receive(self):
-    	self.full_resp = self.sock.recv(4096).decode("utf-8")
-    	self.status_code = self.full_resp[9:12]
+        self.full_resp = self.sock.recv(4096).decode("utf-8")
+        self.status_code = self.full_resp[9:12]
