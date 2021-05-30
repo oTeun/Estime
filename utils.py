@@ -1,6 +1,7 @@
 import requests
 import socket
 import ssl
+from time import time, sleep
 
 
 def readConfig():
@@ -18,6 +19,10 @@ def readConfig():
         return config
     else:
         return None  # return None if content of file was empty or incorrect
+
+
+def sleep_until(timestamp):
+	sleep(timestamp - time()) # sleep until target timestamp
 
 
 class MojangAccount:
