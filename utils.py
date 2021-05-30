@@ -64,10 +64,11 @@ class MojangAccount:
             pass
 
     def create_payload(self):
-        payload = (f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1\r\n"
-                   "Host: api.minecraftservices.com\r\n"
-                   "Content-Type: application/json\r\n"
-                   f"Authorization: {self.bearer}\r\n\r\n")
+        payload = "\r\n".join((f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1",
+                   "Host: api.minecraftservices.com",
+                   "Content-Type: application/json",
+                   f"Authorization: {self.bearer}",
+                   "\r\n"))
         self.payload = bytes(payload, "utf-8")
 
 
