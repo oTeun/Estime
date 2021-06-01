@@ -1,7 +1,7 @@
 # Estime
 A free minecraft name sniper based on sockets
 
-# To Do
+## To Do
 • Change account to custom skin on successful snipe, set in config
 • More config options (maybe)
 • Successful discord webhook to a webhook URL set in config
