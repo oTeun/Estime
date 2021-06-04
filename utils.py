@@ -29,7 +29,7 @@ def readAccounts(maxAccs):
 
 
 def fetchDroptime(name):
-    r = requests.get('https://mojang-api.teun.lol/droptime/' + name)
+    r = requests.get('https://api.teun.lol/droptime/' + name)
     r_json = r.json() # parse the json from the response
     dropTime = r_json['UNIX']
     return dropTime
