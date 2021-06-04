@@ -6,6 +6,7 @@ from datetime import datetime
 
 init()
 system("cls")
+version = "1.0.1"
 
 
 def info(msg):
@@ -98,13 +99,15 @@ def mojang_nc():
 		info("Received " + str(sock.status_code) + " @ " + str(datetime.now()))
 		if sock.status_code == "200":
 			info(Fore.GREEN + "SUCCESS! - Sniped " + name + " @ " + str(datetime.now()) + " on " + sock.data["email"])
-            r = requests.post("https://api.minecraftservices.com/minecraft/profile/skins", headers={"Authorization": sock.data["bearer"]}, json={"variant": "slim", "url": config["skin url"]})
-            if r.status_code == 200:
-                info(Fore.GREEN + "Changed skin")
+			r = requests.post("https://api.minecraftservices.com/minecraft/profile/skins", headers={"Authorization": sock.data["bearer"]}, json={"variant": "slim", "url": config["skin url"]})
+			if r.status_code == 200:
+				info(Fore.GREEN + "Changed skin")
 
 
 def main():
-	print (f"{Fore.GREEN} ______     _   _                \n|  ____|   | | (_)               \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
+	print (f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
+	print("Developed by Teun | discord.gg/98ZMYfD9HJ")
+	print("Version: v" + version)
 	print("""
 1. Mojang namechange sniper
 2. Giftcode sniper
