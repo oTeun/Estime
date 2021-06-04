@@ -23,25 +23,25 @@ def mojang_nc():
 
 	config = utils.readConfig()
 
-	name = inp('Name to snipe')
-	delay = float(inp('Delay offset in milliseconds')) / 1000
+	name = inp("Name to snipe")
+	delay = float(inp("Delay offset in milliseconds")) / 1000
 
-	accounts = utils.readAccounts(int(config['max accounts (mojang)']))
-	info('Loaded ' + str(len(accounts)) + ' accounts!')
+	accounts = utils.readAccounts(int(config["max accounts (mojang)"]))
+	info("Loaded " + str(len(accounts)) + " accounts!")
 
 	try:
 		dropTime = utils.fetchDroptime(name)
 	except Exception:
-		info('Was unable to find a droptime for ' + name)
+		info("Was unable to find a droptime for " + name)
 		quit()
-	info('Started snipe for ' + name + ', dropping at ' + str(datetime.fromtimestamp(dropTime)) + '!\n')
+	info("Started snipe for " + name + ", dropping at " + str(datetime.fromtimestamp(dropTime)) + "!\n")
 
 	utils.sleep_until(dropTime - 50)
 
 	accObjects = []
 	for account in accounts:
-		email, password = account.split(':')[0], account.split(':')[1]
-		sq = account.split(':')[2:]
+		email, password = account.split(":")[0], account.split(":")[1]
+		sq = account.split(":")[2:]
 		accObjects.append(utils.MojangAccount(email, password, name, sq))
 	accounts = accObjects
 
@@ -53,18 +53,18 @@ def mojang_nc():
 		account = accounts[done]
 		if not account.valid:
 			if account.error == 1:
-				info(Fore.RED + account.email + ' was unable to authenticate, it is most likely locked or invalid')
+				info(Fore.RED + account.email + " was unable to authenticate, it is most likely locked or invalid")
 			elif account.error == 2:
-				info(Fore.RED + account.email + ' needs the answers to security questions, but you did not insert any')
-				info('Account format: email:password:answer1:answer2:answer3')
+				info(Fore.RED + account.email + " needs the answers to security questions, but you did not insert any")
+				info("Account format: email:password:answer1:answer2:answer3")
 			elif account.error == 3:
-				info(Fore.RED + account.email + ' is unable to change its name right now')
+				info(Fore.RED + account.email + " is unable to change its name right now")
 			else:
-				info(Fore.RED + account.email + ' encountered an error (code ' + account.error + '), it possibly somehow didnt authenticate')
+				info(Fore.RED + account.email + " encountered an error (code " + account.error + "), it possibly somehow didnt authenticate")
 			accounts.remove(account)
 			done -= 1
 		else:
-			info(Fore.GREEN + 'successfully authenticated ' + account.email)
+			info(Fore.GREEN + "successfully authenticated " + account.email)
 		done += 1
 
 
@@ -76,7 +76,7 @@ def mojang_nc():
 	socks = []
 	for account in accounts:
 		for i in range(2):
-			socks.append(utils.SocketConnection(account.payload, account.email))
+			socks.append(utils.SocketConnection(account.payload, {"email": account.email, "password": account.password, "bearer": account.bearer}))
 
 	for sock in socks:
 		sock.connect()
@@ -97,7 +97,10 @@ def mojang_nc():
 	for sock in socks:
 		info("Received " + str(sock.status_code) + " @ " + str(datetime.now()))
 		if sock.status_code == "200":
-			info(Fore.GREEN + "SUCCESS! - Sniped " + name + " @ " + str(datetime.now()) + " on " + sock.email)
+			info(Fore.GREEN + "SUCCESS! - Sniped " + name + " @ " + str(datetime.now()) + " on " + sock.data["email"])
+            r = requests.post("https://api.minecraftservices.com/minecraft/profile/skins", headers={"Authorization": sock.data["bearer"]}, json={"variant": "slim", "url": config["skin url"]})
+            if r.status_code == 200:
+                info(Fore.GREEN + "Changed skin")
 
 
 def main():

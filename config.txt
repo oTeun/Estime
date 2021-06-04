@@ -1,2 +1,3 @@
 requests per account (mojang): 2
 max accounts (mojang): 1
+skin url: https://texture.namemc.com/19/d8/19d8b72701533cbe.png

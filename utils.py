@@ -97,9 +97,9 @@ class MojangAccount:
 
 
 class SocketConnection:
-    def __init__(self, payload, email):
+    def __init__(self, payload, data):
         self.payload = payload
-        self.email = email
+        self.data = data
         self.sock = None
         self.response = {}
         self.status_code = None
