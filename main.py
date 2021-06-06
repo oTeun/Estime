@@ -11,12 +11,12 @@ version = "1.0.1"
 
 
 def info(msg):
-	print(f"{Fore.GREEN}[INFO] >> {Fore.WHITE}{msg}{Fore.RESET}")
+	print(Fore.GREEN + "[INFO] >> " + Fore.WHITE + str(msg) + Fore.RESET)
 
 
 def inp(msg):
-	print(f"{Fore.GREEN}[INPUT] {Fore.WHITE}{msg}")
-	response = input(f"{Fore.GREEN}>> {Fore.WHITE}")
+	print(Fore.GREEN + "[INPUT] " + Fore.WHITE + str(msg))
+	response = input(Fore.GREEN + ">> " + Fore.WHITE)
 	print()
 	return response
 
