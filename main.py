@@ -11,12 +11,12 @@ version = "1.0.1"
 
 
 def info(msg):
-	print(Fore.GREEN + "[INFO] >> " + Fore.WHITE + str(msg) + Fore.RESET)
+	print(f"{Fore.GREEN}[INFO] >> {Fore.WHITE}{msg}{Fore.RESET}")
 
 
 def inp(msg):
-	print(Fore.GREEN + "[INPUT] " + Fore.WHITE + str(msg))
-	response = input(Fore.GREEN + ">> " + Fore.WHITE)
+	print(f"{Fore.GREEN}[INPUT] {Fore.WHITE}{msg}")
+	response = input(f"{Fore.GREEN}>> {Fore.WHITE}")
 	print()
 	return response
 
@@ -29,14 +29,14 @@ def mojang_nc():
 	delay = float(inp("Delay offset in milliseconds")) / 1000
 
 	accounts = utils.readAccounts(int(config["max accounts (mojang)"]))
-	info("Loaded " + str(len(accounts)) + " accounts!")
+	info(f"Loaded {len(accounts)} accounts!")
 
 	try:
 		dropTime = utils.fetchDroptime(name)
 	except Exception:
-		info("Was unable to find a droptime for " + name)
+		info(f"Was unable to find a droptime for {name}")
 		quit()
-	info("Started snipe for " + name + ", dropping at " + str(datetime.fromtimestamp(dropTime)) + "!\n")
+	info(f"Started snipe for {name}, dropping at {datetime.fromtimestamp(dropTime)}!\n")
 
 	utils.sleep_until(dropTime - 50)
 
@@ -55,18 +55,18 @@ def mojang_nc():
 		account = accounts[done]
 		if not account.valid:
 			if account.error == 1:
-				info(Fore.RED + account.email + " was unable to authenticate, it is most likely locked or invalid")
+				info(f"{Fore.RED}{account.email} was unable to authenticate, it is most likely locked or invalid")
 			elif account.error == 2:
-				info(Fore.RED + account.email + " needs the answers to security questions, but you did not insert any")
+				info(f"{Fore.RED}{account.email} needs the answers to security questions, but you did not insert any")
 				info("Account format: email:password:answer1:answer2:answer3")
 			elif account.error == 3:
-				info(Fore.RED + account.email + " is unable to change its name right now")
+				info(f"{Fore.RED}{account.email} is unable to change its name right now")
 			else:
-				info(Fore.RED + account.email + " encountered an error (code " + account.error + "), it possibly somehow didnt authenticate")
+				info(f"{Fore.RED}{account.email} encountered an error (code {account.error}), it possibly somehow didnt authenticate")
 			accounts.remove(account)
 			done -= 1
 		else:
-			info(Fore.GREEN + "successfully authenticated " + account.email)
+			info(f"{Fore.GREEN}successfully authenticated {account.email}")
 		done += 1
 
 	for account in accounts:
@@ -96,18 +96,18 @@ def mojang_nc():
 	print()
 
 	for sock in socks:
-		info("Received " + str(sock.status_code) + " @ " + str(datetime.now()))
+		info(f"Received {sock.status_code} @ {datetime.now()}")
 		if sock.status_code == "200":
-			info(Fore.GREEN + "SUCCESS! - Sniped " + name + " @ " + str(datetime.now()) + " on " + sock.data["email"])
+			info(f"{Fore.GREEN}SUCCESS! - Sniped {name} @ {datetime.now()} on {sock.data['email']}")
 			r = requests.post("https://api.minecraftservices.com/minecraft/profile/skins", headers={"Authorization": sock.data["bearer"]}, json={"variant": "slim", "url": config["skin url"]})
 			if r.status_code == 200:
-				info(Fore.GREEN + "Changed skin")
+				info(f"{Fore.GREEN}Changed skin")
 
 
 def main():
 	print(f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
 	print("Developed by Teun | discord.gg/98ZMYfD9HJ")
-	print("Version: v" + version)
+	print(f"Version: v{version}")
 	print("""
 1. Mojang namechange sniper
 2. Giftcode sniper
