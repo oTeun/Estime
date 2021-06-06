@@ -23,21 +23,21 @@ def readConfig():
 
 def readAccounts(maxAccs):
     with open('accounts.txt', 'r') as f:
-        lines = f.read().splitlines() # read contents of the accounts file
-        f.close() # close the accounts file
-    return lines[:maxAccs] # return accounts limited to the max amount of accounts given
+        lines = f.read().splitlines()  # read contents of the accounts file
+        f.close()  # close the accounts file
+    return lines[:maxAccs]  # return accounts limited to the max amount of accounts given
 
 
 def fetchDroptime(name):
     r = requests.get('https://api.teun.lol/droptime/' + name)
-    r_json = r.json() # parse the json from the response
+    r_json = r.json()  # parse the json from the response
     dropTime = r_json['UNIX']
     return dropTime
 
 
 def sleep_until(timestamp):
     try:
-        sleep(timestamp - time()) # sleep until target timestamp
+        sleep(timestamp - time())  # sleep until target timestamp
     except Exception:
         pass
 
@@ -55,8 +55,14 @@ class MojangAccount:
         self.error = 0
 
     def authenticate(self):
-        r = requests.post("https://authserver.mojang.com/authenticate",
-                          json={"username": self.email, "password": self.password, "requestUser": True})
+        payload = {
+            "username": self.email,
+            "password": self.password,
+            "requestUser": True
+        }
+
+        r = requests.post("https://authserver.mojang.com/authenticate", json=payload)
+
         if r.status_code == 200:  # check if account is valid
             self.bearer = "Bearer " + r.json()["accessToken"]
             self.valid = True
@@ -64,11 +70,13 @@ class MojangAccount:
             self.valid = False
             self.error = 1
             return
+
         r = requests.get("https://api.mojang.com/user/security/location", headers={"Authorization": self.bearer})
+
         if r.status_code != 204:  # check if security questions are needed
             r = requests.get("https://api.mojang.com/user/security/challenges",
                              headers={"Authorization": self.bearer})  # fetch list of securty questions
-            if r.json() != []:
+            if r.json():
                 if not self.sq:
                     self.valid = False
                     self.error = 2
@@ -80,6 +88,7 @@ class MojangAccount:
                                     {"id": r.json()[2]["answer"]["id"], "answer": self.sq[2]}])
             r = requests.get("https://api.minecraftservices.com/minecraft/profile/namechange",
                              headers={"Authorization": self.bearer})
+
         try:
             if not r.json()["nameChangeAllowed"]:  # check if account can namechange
                 self.valid = False
@@ -89,10 +98,10 @@ class MojangAccount:
 
     def create_payload(self):
         payload = "\r\n".join((f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1",
-                   "Host: api.minecraftservices.com",
-                   "Content-Type: application/json",
-                   f"Authorization: {self.bearer}",
-                   "\r\n"))
+                               "Host: api.minecraftservices.com",
+                               "Content-Type: application/json",
+                               f"Authorization: {self.bearer}",
+                               "\r\n"))
         self.payload = bytes(payload, "utf-8")
 
 

@@ -2,6 +2,7 @@ import utils
 from colorama import Fore, init
 from os import system
 from datetime import datetime
+import requests
 
 
 init()
@@ -68,7 +69,6 @@ def mojang_nc():
 			info(Fore.GREEN + "successfully authenticated " + account.email)
 		done += 1
 
-
 	for account in accounts:
 		account.create_payload()
 
@@ -105,7 +105,7 @@ def mojang_nc():
 
 
 def main():
-	print (f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
+	print(f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
 	print("Developed by Teun | discord.gg/98ZMYfD9HJ")
 	print("Version: v" + version)
 	print("""
