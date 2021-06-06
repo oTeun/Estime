@@ -76,7 +76,7 @@ def mojang_nc():
 
 	socks = []
 	for account in accounts:
-		for i in range(2):
+		for i in range(int(config['requests per account (mojang)'])):
 			socks.append(utils.SocketConnection(account.payload, {"email": account.email, "password": account.password, "bearer": account.bearer}))
 
 	for sock in socks:
