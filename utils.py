@@ -50,6 +50,7 @@ class MojangAccount:
         self.sq = sq
         self.valid = False
         self.bearer = None
+        self.authHeaders = {}
         self.nameChangeAllowed = True
         self.payload = b""
         self.error = 0
@@ -65,29 +66,34 @@ class MojangAccount:
 
         if r.status_code == 200:  # check if account is valid
             self.bearer = "Bearer " + r.json()["accessToken"]
+            self.authHeaders = {"Authorization": self.bearer}
             self.valid = True
         else:
             self.valid = False
             self.error = 1
             return
 
-        r = requests.get("https://api.mojang.com/user/security/location", headers={"Authorization": self.bearer})
+        r = requests.get("https://api.mojang.com/user/security/location", headers=self.authHeaders)
 
         if r.status_code != 204:  # check if security questions are needed
             r = requests.get("https://api.mojang.com/user/security/challenges",
-                             headers={"Authorization": self.bearer})  # fetch list of securty questions
+                             headers=self.authHeaders)  # fetch list of securty questions
             if r.json():
                 if not self.sq:
                     self.valid = False
                     self.error = 2
                     return
+
+                payload = [
+                    {"id": r.json()[0]["answer"]["id"], "answer": self.sq[0]},
+                    {"id": r.json()[1]["answer"]["id"], "answer": self.sq[1]},
+                    {"id": r.json()[2]["answer"]["id"], "answer": self.sq[2]}]
+
                 requests.post("https://api.mojang.com/user/security/location",
-                              headers={"Authorization": self.bearer},
-                              json=[{"id": r.json()[0]["answer"]["id"], "answer": self.sq[0]},
-                                    {"id": r.json()[1]["answer"]["id"], "answer": self.sq[1]},
-                                    {"id": r.json()[2]["answer"]["id"], "answer": self.sq[2]}])
+                              headers=self.authHeaders, json=payload)
+
             r = requests.get("https://api.minecraftservices.com/minecraft/profile/namechange",
-                             headers={"Authorization": self.bearer})
+                             headers=self.authHeaders)
 
         try:
             if not r.json()["nameChangeAllowed"]:  # check if account can namechange
