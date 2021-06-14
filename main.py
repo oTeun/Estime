@@ -42,32 +42,43 @@ def mojang_nc():
 
 	accObjects = []
 	for account in accounts:
-		email, password = account.split(":")[0], account.split(":")[1]
-		sq = account.split(":")[2:]
+		combo = account.split(":")
+		email, password = combo[0], combo[1]
+		sq = combo[2:]
 		accObjects.append(utils.MojangAccount(email, password, name, sq))
 	accounts = accObjects
 
 	for account in accounts:
-		account.authenticate()
+		try:
+			account.authenticate()
+
+		except utils.AuthenticationError:
+			info(f"{Fore.RED}{account.email} was unable to authenticate, it is most likely locked or invalid")
+
+		except utils.SecurityQuestionsNotFound:
+			info(f"{Fore.RED}{account.email} needs the answers to security questions, but you did not insert any")
+			info("Account format: email:password:answer1:answer2:answer3")
+
+		except utils.NameChangeNotAllowed:
+			info(f"{Fore.RED}{account.email} is unable to change its name right now")
+
+		except Exception:
+			info(
+				f"{Fore.RED}{account.email} encountered an error")
 
 	done = 0
 	for i in range(len(accounts)):
 		account = accounts[done]
 		if not account.valid:
-			if account.error == 1:
-				info(f"{Fore.RED}{account.email} was unable to authenticate, it is most likely locked or invalid")
-			elif account.error == 2:
-				info(f"{Fore.RED}{account.email} needs the answers to security questions, but you did not insert any")
-				info("Account format: email:password:answer1:answer2:answer3")
-			elif account.error == 3:
-				info(f"{Fore.RED}{account.email} is unable to change its name right now")
-			else:
-				info(f"{Fore.RED}{account.email} encountered an error (code {account.error}), it possibly somehow didnt authenticate")
 			accounts.remove(account)
 			done -= 1
 		else:
 			info(f"{Fore.GREEN}successfully authenticated {account.email}")
 		done += 1
+
+	if len(accounts) == 0:
+		info(f"{Fore.RED}No accounts are left, quitting.")
+		quit()
 
 	for account in accounts:
 		account.create_payload()

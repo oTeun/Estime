@@ -4,6 +4,18 @@ import ssl
 from time import time, sleep
 
 
+class AuthenticationError(Exception):
+    pass
+
+
+class SeccurityQuestionsNotFound(Exception):
+    pass
+
+
+class NameChangeNotAllowed(Exception):
+    pass
+
+
 def readConfig():
     with open("config.txt", "r") as f:
         lines = f.read().splitlines()  # read content of config.txt
@@ -53,7 +65,6 @@ class MojangAccount:
         self.authHeaders = {}
         self.nameChangeAllowed = True
         self.payload = b""
-        self.error = 0
 
     def authenticate(self):
         payload = {
@@ -70,8 +81,7 @@ class MojangAccount:
             self.valid = True
         else:
             self.valid = False
-            self.error = 1
-            return
+            raise AuthenticationError
 
         r = requests.get("https://api.mojang.com/user/security/location", headers=self.authHeaders)
 
@@ -81,8 +91,7 @@ class MojangAccount:
             if r.json():
                 if not self.sq:
                     self.valid = False
-                    self.error = 2
-                    return
+                    raise SeccurityQuestionsNotFound
 
                 payload = [
                     {"id": r.json()[0]["answer"]["id"], "answer": self.sq[0]},
@@ -98,7 +107,7 @@ class MojangAccount:
         try:
             if not r.json()["nameChangeAllowed"]:  # check if account can namechange
                 self.valid = False
-                self.error = 3
+                raise NameChangeNotAllowed
         except Exception:
             pass
 
