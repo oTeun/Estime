@@ -1,12 +1,13 @@
 import utils
 from colorama import Fore, init
+import os
 from os import system
 from datetime import datetime
 import requests
 
 
 init()
-system("cls")
+system("clear") if os.name == 'posix' else system("cls")
 version = "1.0.1"
 
 
