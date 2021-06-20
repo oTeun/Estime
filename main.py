@@ -22,6 +22,7 @@ def inp(msg):
 
 
 def mojang_nc():
+	dropTime = 0
 
 	config = utils.readConfig()
 
@@ -33,9 +34,13 @@ def mojang_nc():
 
 	try:
 		dropTime = utils.fetchDroptime(name)
+		if dropTime <= 1000:
+			sleep(-1)
 	except Exception:
-		info(f"Was unable to find a droptime for {name}")
-		quit()
+		print()
+		info(f"API Down. Using Manual input. When is name dropping?")
+		print()
+		dropTime += int(inp("Drop in UNIX"))
 	info(f"Started snipe for {name}, dropping at {datetime.fromtimestamp(dropTime)}!\n")
 
 	utils.sleep_until(dropTime - 50)
@@ -116,7 +121,13 @@ def mojang_nc():
 
 
 def main():
-	print(f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
+	print(f"""{Fore.GREEN} ______	    _   _				
+|  ____|   | | (_)			   
+| |__   ___| |_ _ _ __ ___   ___ 
+|  __| / __| __| | '_ ` _ \ / _ \ 
+| |____\__ \ |_| | | | | | |  __/
+|______|___/\__|_|_| |_| |_|\___|
+""")
 	print("Developed by Teun | discord.gg/98ZMYfD9HJ")
 	print(f"Version: v{version}")
 	print("""
