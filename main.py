@@ -35,6 +35,8 @@ def mojang_nc():
 		dropTime = utils.fetchDroptime(name)
 	except Exception:
 		info(f"Was unable to find a droptime for {name}")
+		info('Press enter to exit')
+		input()
 		quit()
 	info(f"Started snipe for {name}, dropping at {datetime.fromtimestamp(dropTime)}!\n")
 
@@ -78,6 +80,8 @@ def mojang_nc():
 
 	if len(accounts) == 0:
 		info(f"{Fore.RED}No accounts are left, quitting.")
+		info('Press enter to exit')
+		input()
 		quit()
 
 	for account in accounts:
@@ -129,15 +133,24 @@ def main():
 		option = int(option)
 	except Exception:
 		info("Please input the number of the option you want to choose!")
+		info('Press enter to exit')
+		input()
 		quit()
 	if option == 1:
 		mojang_nc()
 	elif option == 2:
 		info("Coming soon!")
+		info('Press enter to exit')
+		input()
 		quit()
 	elif option == 3:
 		info("Coming soon!")
+		info('Press enter to exit')
+		input()
 		quit()
+
+	info('Press enter to exit')
+	input()
 
 
 if __name__ == "__main__":
