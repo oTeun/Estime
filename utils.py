@@ -2,6 +2,7 @@ import requests
 import socket
 import ssl
 from time import time, sleep
+import json
 
 
 class AuthenticationError(Exception):
@@ -117,6 +118,27 @@ class MojangAccount:
                                "Content-Type: application/json",
                                f"Authorization: {self.bearer}",
                                "\r\n"))
+        self.payload = bytes(payload, "utf-8")
+
+
+class MicrosoftAccount:
+    def __init__(self, bearer, wantedName):
+        self.bearer = bearer
+        self.payload = None
+        self.wantedName = wantedName
+
+    def create_payload(self):
+        json_payload = {'profileName': self.wantedName}
+        json_payload = json.dumps(json_payload)
+
+        payload = "\r\n".join((f"POST /minecraft/profile HTTP/1.1",
+                               "Host: api.minecraftservices.com",
+                               "Content-Type: application/json",
+                               f"Authorization: {self.bearer}",
+                               f"Content-Length: {len(json_payload)}",
+                               "\r\n"))
+        payload += json_payload
+
         self.payload = bytes(payload, "utf-8")
 
 
