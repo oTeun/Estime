@@ -34,8 +34,8 @@ def readConfig():
         return None  # return None if content of file was empty or incorrect
 
 
-def readAccounts(maxAccs):
-    with open('accounts.txt', 'r') as f:
+def readAccounts(maxAccs, fileName):
+    with open(fileName, 'r') as f:
         lines = f.read().splitlines()  # read contents of the accounts file
         f.close()  # close the accounts file
     return lines[:maxAccs]  # return accounts limited to the max amount of accounts given
@@ -45,7 +45,7 @@ def fetchDroptime(name):
     r = requests.get('https://api.teun.lol/droptime/' + name)
     r_json = r.json()  # parse the json from the response
     dropTime = r_json['UNIX']
-    return dropTime
+    return float(dropTime)
 
 
 def sleep_until(timestamp):
@@ -123,6 +123,8 @@ class MojangAccount:
 
 class MicrosoftAccount:
     def __init__(self, bearer, wantedName):
+        if "Bearer " not in bearer:
+            bearer = "Bearer " + bearer
         self.bearer = bearer
         self.payload = None
         self.wantedName = wantedName
