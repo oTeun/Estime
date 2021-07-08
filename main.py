@@ -209,10 +209,7 @@ def main():
     if option == 1:
         mojang_nc()
     elif option == 2:
-        info("Coming soon!")
-        info('Press enter to exit')
-        input()
-        quit()
+        microsoft_gc()
     elif option == 3:
         info("Coming soon!")
         info('Press enter to exit')
