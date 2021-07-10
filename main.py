@@ -97,6 +97,7 @@ def mojang_nc(name, delay):
     utils.sleep_until(dropTime - delay)
 
     for sock in socks:
+        info(f"Sent request @ {datetime.now()}")
         sock.send()
 
     for sock in socks:
@@ -163,6 +164,7 @@ def microsoft_gc(name, delay):
     utils.sleep_until(dropTime - delay)
 
     for sock in socks:
+        info(f"Sent request @ {datetime.now()}")
         sock.send()
 
     for sock in socks:
