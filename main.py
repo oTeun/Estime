@@ -157,7 +157,7 @@ def microsoft_gc():
 
     socks = []
     for account in accounts:
-        for i in range(int(config['requests per account (mojang)'])):
+        for i in range(int(config['requests per account (microsoft)'])):
             socks.append(utils.SocketConnection(account.payload, {"bearer": account.bearer}))
 
     for sock in socks:
@@ -216,6 +216,7 @@ def main():
         input()
         quit()
 
+    print()
     info('Press enter to exit')
     input()
 
