@@ -3,6 +3,7 @@ from colorama import Fore, init
 from os import system
 from datetime import datetime
 import requests
+import sys
 
 init()
 system("cls")
@@ -20,11 +21,12 @@ def inp(msg):
     return response
 
 
-def mojang_nc():
+def mojang_nc(name, delay):
+    print()
+
     config = utils.readConfig()
 
-    name = inp("Name to snipe")
-    delay = float(inp("Delay offset in milliseconds")) / 1000
+    delay = float(delay) / 1000
 
     accounts = utils.readAccounts(int(config["max accounts (mojang)"]), 'accounts.txt')
     info(f"Loaded {len(accounts)} accounts!")
@@ -33,9 +35,7 @@ def mojang_nc():
         dropTime = utils.fetchDroptime(name)
     except Exception:
         info(f"Was unable to find a droptime for {name}")
-        info('Press enter to exit')
-        input()
-        quit()
+        done()
     info(f"Started snipe for {name}, dropping at {datetime.fromtimestamp(dropTime)}!\n")
 
     utils.sleep_until(dropTime - 50)
@@ -66,21 +66,19 @@ def mojang_nc():
             info(
                 f"{Fore.RED}{account.email} encountered an error")
 
-    done = 0
+    _done = 0
     for i in range(len(accounts)):
-        account = accounts[done]
+        account = accounts[_done]
         if not account.valid:
             accounts.remove(account)
-            done -= 1
+            _done -= 1
         else:
             info(f"{Fore.GREEN}successfully authenticated {account.email}")
-        done += 1
+        _done += 1
 
     if len(accounts) == 0:
         info(f"{Fore.RED}No accounts are left, quitting.")
-        info('Press enter to exit')
-        input()
-        quit()
+        done()
 
     for account in accounts:
         account.create_payload()
@@ -120,11 +118,12 @@ def mojang_nc():
                 info(f"{Fore.GREEN}Changed skin")
 
 
-def microsoft_gc():
+def microsoft_gc(name, delay):
+    print()
+
     config = utils.readConfig()
 
-    name = inp("Name to snipe")
-    delay = float(inp("Delay offset in milliseconds")) / 1000
+    delay = float(delay) / 1000
 
     accounts = utils.readAccounts(int(config["max accounts (microsoft)"]), 'tokens.txt')
     info(f"Loaded {len(accounts)} accounts!")
@@ -137,9 +136,7 @@ def microsoft_gc():
         try:
             dropTime = float(inp("Enter manual droptime in UNIX: "))
         except Exception:
-            info('Press enter to exit')
-            input()
-            quit()
+            done()
 
     info(f"Started snipe for {name}, dropping at {datetime.fromtimestamp(dropTime)}!\n")
 
@@ -193,32 +190,72 @@ def main():
         f"{Fore.GREEN} ______	 _   _				\n|  ____|   | | (_)			   \n| |__   ___| |_ _ _ __ ___   ___ \n|  __| / __| __| | '_ ` _ \ / _ \ \n| |____\__ \ |_| | | | | | |  __/\n|______|___/\__|_|_| |_| |_|\___|")
     print("Developed by Teun | discord.gg/98ZMYfD9HJ")
     print(f"Version: v{version}")
+
+    options = []
+
+    if len(sys.argv) > 1:
+        try:
+            options = sys.argv[1:]
+        except Exception:
+            pass
+
+    if len(options) == 3:
+
+        if options[0].lower() in ["1", "mojang", "mojang_nc", "mojang namechange sniper"]:
+            mojang_nc(options[1], options[2])
+
+        elif options[0].lower() in ["2", "gc", "giftcode", "giftcard", "giftcode sniper"]:
+            microsoft_gc(options[1], options[2])
+
+        else:
+            info("""Your arguments were incorrect.
+Please enter like this: main.py (sniper option) (wanted name) (delay)
+Examples:
+- main.py mojang coolName 45
+- main.py gc coolName 55
+- main.py""")
+            done()
+
+    elif len(options) != 0:
+        info("""Your arguments were incorrect.
+Please enter like this: main.py (sniper option) (wanted name) (delay)
+Examples:
+- main.py mojang coolName 45
+- main.py gc coolName 55
+- main.py""")
+        done()
+
     print("""
 1. Mojang namechange sniper
 2. Giftcode sniper
 3. Microsoft namechange sniper
-""")
+    """)
+
     option = inp("Option")
+
     try:
         option = int(option)
     except Exception:
         info("Please input the number of the option you want to choose!")
-        info('Press enter to exit')
-        input()
-        quit()
+        done()
+
+    name = inp("Name to snipe")
+    delay = inp("Delay offset in milliseconds")
+
     if option == 1:
-        mojang_nc()
+        mojang_nc(name, delay)
     elif option == 2:
-        microsoft_gc()
+        microsoft_gc(name, delay)
     elif option == 3:
         info("Coming soon!")
-        info('Press enter to exit')
-        input()
-        quit()
+        done()
 
+
+def done():
     print()
     info('Press enter to exit')
     input()
+    quit()
 
 
 if __name__ == "__main__":
