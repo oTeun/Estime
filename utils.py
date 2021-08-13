@@ -42,9 +42,9 @@ def readAccounts(maxAccs, fileName):
 
 
 def fetchDroptime(name):
-    r = requests.get('https://api.teun.lol/droptime/' + name)
+    r = requests.get(f"http://api.star.shopping/droptime/{username}", headers={"User-Agent": "Sniper"})
     r_json = r.json()  # parse the json from the response
-    dropTime = r_json['UNIX']
+    dropTime = r_json['unix']
     return float(dropTime)
 
 
