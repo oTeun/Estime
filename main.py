@@ -22,7 +22,6 @@ def inp(msg):
 
 
 def mojang_nc(name, delay):
-    print()
 
     config = utils.readConfig()
 
@@ -75,6 +74,8 @@ def mojang_nc(name, delay):
         else:
             info(f"{Fore.GREEN}successfully authenticated {account.email}")
         _done += 1
+
+    print()
 
     if len(accounts) == 0:
         info(f"{Fore.RED}No accounts are left, quitting.")
