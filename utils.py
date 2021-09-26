@@ -9,7 +9,7 @@ class AuthenticationError(Exception):
     pass
 
 
-class SeccurityQuestionsNotFound(Exception):
+class SecurityQuestionsNotFound(Exception):
     pass
 
 
@@ -92,7 +92,7 @@ class MojangAccount:
             if r.json():
                 if not self.sq:
                     self.valid = False
-                    raise SeccurityQuestionsNotFound
+                    raise SecurityQuestionsNotFound
 
                 payload = [
                     {"id": r.json()[0]["answer"]["id"], "answer": self.sq[0]},
