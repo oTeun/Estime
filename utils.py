@@ -35,16 +35,20 @@ def readConfig():
 
 
 def readAccounts(maxAccs, fileName):
-    with open(fileName, 'r') as f:
+    with open(fileName, "r") as f:
         lines = f.read().splitlines()  # read contents of the accounts file
         f.close()  # close the accounts file
-    return lines[:maxAccs]  # return accounts limited to the max amount of accounts given
+    return lines[
+        :maxAccs
+    ]  # return accounts limited to the max amount of accounts given
 
 
 def fetchDroptime(name):
-    r = requests.get(f"http://api.star.shopping/droptime/{name}", headers={"User-Agent": "Sniper"})
+    r = requests.get(
+        f"http://api.star.shopping/droptime/{name}", headers={"User-Agent": "Sniper"}
+    )
     r_json = r.json()  # parse the json from the response
-    dropTime = r_json['unix']
+    dropTime = r_json["unix"]
     return float(dropTime)
 
 
@@ -71,7 +75,7 @@ class MojangAccount:
         payload = {
             "username": self.email,
             "password": self.password,
-            "requestUser": True
+            "requestUser": True,
         }
 
         r = requests.post("https://authserver.mojang.com/authenticate", json=payload)
@@ -84,11 +88,15 @@ class MojangAccount:
             self.valid = False
             raise AuthenticationError
 
-        r = requests.get("https://api.mojang.com/user/security/location", headers=self.authHeaders)
+        r = requests.get(
+            "https://api.mojang.com/user/security/location", headers=self.authHeaders
+        )
 
         if r.status_code != 204:  # check if security questions are needed
-            r = requests.get("https://api.mojang.com/user/security/challenges",
-                             headers=self.authHeaders)  # fetch list of securty questions
+            r = requests.get(
+                "https://api.mojang.com/user/security/challenges",
+                headers=self.authHeaders,
+            )  # fetch list of securty questions
             if r.json():
                 if not self.sq:
                     self.valid = False
@@ -97,13 +105,19 @@ class MojangAccount:
                 payload = [
                     {"id": r.json()[0]["answer"]["id"], "answer": self.sq[0]},
                     {"id": r.json()[1]["answer"]["id"], "answer": self.sq[1]},
-                    {"id": r.json()[2]["answer"]["id"], "answer": self.sq[2]}]
+                    {"id": r.json()[2]["answer"]["id"], "answer": self.sq[2]},
+                ]
 
-                requests.post("https://api.mojang.com/user/security/location",
-                              headers=self.authHeaders, json=payload)
+                requests.post(
+                    "https://api.mojang.com/user/security/location",
+                    headers=self.authHeaders,
+                    json=payload,
+                )
 
-            r = requests.get("https://api.minecraftservices.com/minecraft/profile/namechange",
-                             headers=self.authHeaders)
+            r = requests.get(
+                "https://api.minecraftservices.com/minecraft/profile/namechange",
+                headers=self.authHeaders,
+            )
 
         try:
             if not r.json()["nameChangeAllowed"]:  # check if account can namechange
@@ -113,11 +127,15 @@ class MojangAccount:
             pass
 
     def create_payload(self):
-        payload = "\r\n".join((f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1",
-                               "Host: api.minecraftservices.com",
-                               "Content-Type: application/json",
-                               f"Authorization: {self.bearer}",
-                               "\r\n"))
+        payload = "\r\n".join(
+            (
+                f"PUT /minecraft/profile/name/{self.wantedName} HTTP/1.1",
+                "Host: api.minecraftservices.com",
+                "Content-Type: application/json",
+                f"Authorization: {self.bearer}",
+                "\r\n",
+            )
+        )
         self.payload = bytes(payload, "utf-8")
 
 
@@ -130,15 +148,19 @@ class MicrosoftAccount:
         self.wantedName = wantedName
 
     def create_payload(self):
-        json_payload = {'profileName': self.wantedName}
+        json_payload = {"profileName": self.wantedName}
         json_payload = json.dumps(json_payload)
 
-        payload = "\r\n".join((f"POST /minecraft/profile HTTP/1.1",
-                               "Host: api.minecraftservices.com",
-                               "Content-Type: application/json",
-                               f"Authorization: {self.bearer}",
-                               f"Content-Length: {len(json_payload)}",
-                               "\r\n"))
+        payload = "\r\n".join(
+            (
+                "POST /minecraft/profile HTTP/1.1",
+                "Host: api.minecraftservices.com",
+                "Content-Type: application/json",
+                f"Authorization: {self.bearer}",
+                f"Content-Length: {len(json_payload)}",
+                "\r\n",
+            )
+        )
         payload += json_payload
 
         self.payload = bytes(payload, "utf-8")
